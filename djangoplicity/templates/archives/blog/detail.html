@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block site_title %}NOIRLab Blog - {{ object.title }}{% if block.super%} | {{ block.super }}{% endif %}{% endblock %}</title>
+
+{% block content_area %}
+
+<div class="container" id="blog">
+{% if request.NO_TRANSLATION %}
+<div class="notranslation-alert alert alert-info alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <strong>{% trans "Sorry!" %}</strong> {% trans "This page is not yet available in your preferred language, so we're displaying the original version instead." %}
+</div>
+{% endif %}
+
+<div class="row">
+    {% include "archives/blog/left-column.html" with post=object %}
+
+    <div class="col-md-10">
+        {% include "archives/embargo_notice.html" %}
+        {% include "archives/post/post.html" with post=object %}
+    </div>
+</div>
+
+</div> <!-- #body -->
+{% endblock %}

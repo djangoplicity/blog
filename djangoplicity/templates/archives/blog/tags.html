@@ -1,0 +1,15 @@
+{% load i18n %}
+{% if tags %}
+<div class="tags">
+    <div class="title">{% trans 'Tags' %}:</div>
+    <ul>
+    {% for tag in tags.all %}
+        <li class="tag{% if tag in post.tags.all %} current{% endif %}">
+            <a href="{% url 'blog_query_tag' tag.slug %}">
+                {{ tag }}
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}

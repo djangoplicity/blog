@@ -1,0 +1,90 @@
+{% load i18n %}
+<div class="post">
+    {% if perms.blog.change_post %}
+    <div class="edit-link">
+        <a class="btn btn-primary btn-sm" href="{% url 'admin_site:blog_post_change' post.slug %}" role="button">Edit</a>
+    </div>
+    {% endif %}
+    <div class="header">
+        <img class="banner" src="{{ post.banner.resource_banner1920.url }}">
+        <div class="title">
+            <h1><a href="{% url 'blog_detail' post.slug %}">{{ post.title }}</a></h1>
+            {% if post.subtitle %}
+                <h2>{{ post.subtitle }}</h2>
+            {% endif %}
+        </div>
+
+        <div class="date">{{ post.release_date|date }}</div>
+        <div class="category">
+            <a href="{% url 'blog_query_category' post.category.slug %}">
+                {{ post.category }}
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% if post.discover_box %}
+            <div class="discover-box">
+                <div class="title">
+                    {% trans 'What you’ll discover in this blog post:' %}
+                </div>
+                <div class="content">
+                    {{ post.discover_box|safe }}
+                </div>
+            </div>
+            {% endif %}
+            <div class="lede">
+                {{ post.lede }}
+            </div>
+        </div>
+        <div class="col-md-12 body">
+            {{ post.body|safe }}
+        </div>
+        <div class="col-md-3 side-info">
+            {% for author in post.authordescription_set.all %}
+            <div class="author">
+                {% if author.author.photo %}
+                    <img src="{{ author.author.photo.resource_thumb350x.url }}">
+                {% elif author.author.static_photo %}
+                    <img src="{{ author.author.static_photo }}">
+                {% endif %}
+                <div class="name">
+                    {% if author.description %}
+                        <div class="description">
+                            {{ author.description }}
+                        </div>
+                    {% endif %}
+                    {{ author.author.name }}
+                </div>
+            </div>
+            {% endfor %}
+            {% include "archives/post/tags.html" %}
+        </div>
+        {% if post.numbers_box %}
+        <div class="col-md-12 numbers-box">
+            <h3>Numbers in this article</h3>
+            {{ post.numbers_box|safe }}
+        </div>
+        {% endif %}
+        {% if post.links %}
+        <div class="col-md-12 links">
+            <h3>Links</h3>
+            {{ post.links|safe }}
+        </div>
+        {% endif %}
+        {% for author in post.authors.all %}
+            {% if author.biography %}
+            <div class="col-md-12 biography">
+                <h3>Biography {{ author }}</h3>
+                {{ author.biography|safe }}
+            </div>
+            {% endif %}
+        {% endfor %}
+        {% if post.category.footer %}
+        <div class="col-md-12 category-footer">
+            <hr>
+            {{ post.category.footer|safe }}
+        </div>
+        {% endif %}
+    </div>
+</div>
