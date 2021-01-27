@@ -50,17 +50,10 @@ class PostOptions(ArchiveOptions):
     prefetch_related = ('tags', 'authordescription_set__author')
 
     class Queries(object):
-        default = AllPublicQuery(browsers=('normal', ),
-            verbose_name=_('Blog Posts'), feed_name='default',
-            select_related=['category'])
-        staging = EmbargoQuery(browsers=('normal', ),
-            verbose_name=_('Blog Posts (Staging)'))
-        tag = PostTagQuery(browsers=('normal', ),
-            relation_field='tags', url_field='slug', title_field='name',
-            use_category_title=True, verbose_name='%s')
-        category = PostTagQuery(browsers=('normal', ),
-            relation_field='category', url_field='slug', title_field='name',
-            use_category_title=True, verbose_name='%s')
+        default = AllPublicQuery(browsers=('normal', ), verbose_name=_('Blog Posts'), feed_name='default', select_related=['category'])
+        staging = EmbargoQuery(browsers=('normal', ), verbose_name=_('Blog Posts (Staging)'))
+        tag = PostTagQuery(browsers=('normal', ), relation_field='tags', url_field='slug', title_field='name', use_category_title=True, verbose_name='%s')
+        category = PostTagQuery(browsers=('normal', ), relation_field='category', url_field='slug', title_field='name', use_category_title=True, verbose_name='%s')
 
     class Browsers(object):
         normal = ListBrowser()
