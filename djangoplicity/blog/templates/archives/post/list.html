@@ -1,8 +1,12 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n static %}
 {% load djangoplicity_utils %}
 
-{% block site_title %}ESOblog - Behind the scenes at ESO{{ object.title }}{% if block.super%} | {{ block.super }}{% endif %}{% endblock %}</title>
+{% block extra_header %}
+    <link rel="stylesheet" type="text/css" href="{% static "blog/style.css" %}" />
+{% endblock %}
+
+{% block site_title %}{{ WEBSITE_NAME }} - Blog {{ object.title }}{% if block.super%} | {{ block.super }}{% endif %}{% endblock %}</title>
 
 {% block content_area %}
 
