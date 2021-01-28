@@ -3,7 +3,7 @@
 {% load djangoplicity_utils %}
 
 {% block extra_header %}
-    <link rel="stylesheet" type="text/css" href="{% static "blog/style.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "blog/css/style.css" %}" />
 {% endblock %}
 
 {% block site_title %}{{ WEBSITE_NAME }} - Blog {{ object.title }}{% if block.super%} | {{ block.super }}{% endif %}{% endblock %}</title>
