@@ -47,7 +47,7 @@
                     {% endif %}
                 </div>
 
-                <div class="date">{{ post.release_date|date }}</div>
+                <div class="date">{{ post.release_date|date:"j N Y" }}</div>
                 <div class="category">
                     <a href="{% url 'blog_query_category' post.category.slug %}">
                         {{ post.category }}
