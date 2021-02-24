@@ -32,23 +32,30 @@
 from __future__ import unicode_literals
 import copy
 
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 from django.db.models import signals
-from django.core.urlresolvers import reverse
 from django.template import Engine, Template
 from django.template.base import TemplateSyntaxError
 
 from djangoplicity.archives.base import ArchiveModel, cache_handler
+from djangoplicity.archives.translation import TranslationProxyMixin
 from djangoplicity.media.models import Image
+from djangoplicity.translation.models import TranslationModel, translation_reverse
+from django.utils.translation import ugettext_lazy as _
 
 
 class Author(models.Model):
     name = models.CharField(max_length=100)
     biography = models.TextField(blank=True)
-    photo = models.ForeignKey(Image, blank=True, null=True,
-        help_text='Image from the archive')
-    static_photo = models.CharField(max_length=200, blank=True,
-        help_text='Direct link to a JPG image, recommended size: 350px wide')
+    photo = models.ForeignKey(
+        Image, blank=True, null=True,
+        help_text='Image from the archive'
+    )
+    static_photo = models.CharField(
+        max_length=200, blank=True,
+        help_text='Direct link to a JPG image, recommended size: 350px wide'
+    )
 
     def __unicode__(self):
         return self.name
@@ -66,8 +73,10 @@ class AuthorDescription(models.Model):
     '''
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     post = models.ForeignKey('Post', on_delete=models.CASCADE)
-    description = models.CharField(max_length=100, blank=True,
-        help_text='Optional description, e.g.: "Author: ", or "Interview with"')
+    description = models.CharField(
+        max_length=100, blank=True,
+        help_text='Optional description, e.g.: "Author: ", or "Interview with"'
+    )
 
     def __unicode__(self):
         return self.description + ' ' + self.author.name
@@ -75,10 +84,13 @@ class AuthorDescription(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(blank=False, unique=True,
-        help_text='Slug of the category, used for URLs')
-    footer = models.TextField(blank=True, help_text='Optional footer added '
-        'to the bottom of posts')
+    slug = models.SlugField(
+        blank=False, unique=True,
+        help_text='Slug of the category, used for URLs'
+    )
+    footer = models.TextField(
+        blank=True, help_text='Optional footer added to the bottom of posts'
+    )
 
     class Meta:
         verbose_name_plural = 'categories'
@@ -92,15 +104,17 @@ class Category(models.Model):
             cache_handler(Post, instance=post)
 
 
-class Post(ArchiveModel, models.Model):
-    slug = models.SlugField(primary_key=True, help_text='Used for the URL')
+class Post(ArchiveModel, TranslationModel):
+    slug = models.SlugField(primary_key=True, help_text='Used for the URL, this cannot be updated later')
     title = models.CharField(max_length=255)
-    subtitle = models.CharField(max_length=255, blank=True,
-        help_text='Optional subtitle')
+    subtitle = models.CharField(
+        max_length=255, blank=True,
+        help_text='Optional subtitle'
+    )
     banner = models.ForeignKey(Image, verbose_name='Banner Image')
     authors = models.ManyToManyField('Author', through='AuthorDescription')
     category = models.ForeignKey('Category')
-    tags = models.ManyToManyField('Tag')
+    tags = models.ManyToManyField('Tag', blank=True)
     lede = models.TextField()
     body = models.TextField()
     discover_box = models.TextField(blank=True)
@@ -109,6 +123,11 @@ class Post(ArchiveModel, models.Model):
 
     class Meta:
         ordering = ('-release_date', )
+
+    class Translation:
+        fields = ['title', 'subtitle', 'lede', 'body', 'discover_box', 'numbers_box', 'links']
+        excludes = ['published', 'last_modified', 'created']
+        non_default_languages_in_fallback = False  # Don't show non-en post. if no en translation is available
 
     class Archive:
         # No blog specific archive
@@ -121,6 +140,7 @@ class Post(ArchiveModel, models.Model):
             published = True
             rename_pk = ('blog_post', 'slug')
             rename_fks = (
+                ('blog_post', 'source_id'),
                 ('blog_authordescription', 'post_id'),
                 ('blog_post_tags', 'post_id'),
             )
@@ -161,22 +181,62 @@ class Post(ArchiveModel, models.Model):
             return e.template_debug
 
     def get_absolute_url(self):
-        return reverse('blog_detail', args=[self.slug])
+        return translation_reverse('blog_detail', args=[self.slug], lang=self.lang)
 
     def og_title(self):
         '''
         Open Graph title
         '''
-        title = 'ESOblog: ' + self.title
+        title = 'Blog: ' + self.title
         if self.subtitle:
             title += ' ' + self.subtitle
         return title
 
 
+# ========================================================================
+# Translation proxy model
+# ========================================================================
+class PostProxy(Post, TranslationProxyMixin):
+    """
+    Post proxy model for creating admin only to edit
+    translated objects.
+    """
+    objects = Post.translation_objects
+
+    def validate_unique(self, exclude=None):
+        # Note: We are not using the clean method from the TranslationProxyMixin
+        # because it doesn't consider the case when the translation PK(Slug) is manually filled
+        """ Validate that translation language is *not* identical to source language. """
+        try:
+            if not self.source:
+                raise ValidationError("You must provide a translation source.")
+            if self._state and self._state.adding:
+                PostProxy.objects.get(source=self.source.pk, lang=self.lang)
+                raise ValidationError({'lang': ["Translation already exists for selected language."]})
+        except ObjectDoesNotExist:
+            pass
+        super(PostProxy, self).validate_unique(exclude=exclude)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        proxy = True
+        verbose_name = _('Post translation')
+
+    # class Archive:
+    #    class Meta:
+    #        rename_pk = ('announcements_announcement', 'id')
+    #        rename_fks = []
+    #        clean_html_fields = ['description', 'links', 'contacts']
+
+
 class Tag(models.Model):
     name = models.CharField(max_length=50)
-    slug = models.SlugField(blank=False, unique=True,
-        help_text='Slug of the tag, used for URLs')
+    slug = models.SlugField(
+        blank=False, unique=True,
+        help_text='Slug of the tag, used for URLs'
+    )
 
     def __unicode__(self):
         return self.name
