@@ -45,5 +45,4 @@ class PostDetailView(GenericDetailView):
         tpl = engines['django'].from_string(obj.body)
         obj.body = tpl.render()
 
-        return super(PostDetailView, self).render(request, model, obj, state,
-            admin_rights, **kwargs)
+        return super(PostDetailView, self).render(request, model, obj, state, admin_rights, **kwargs)
