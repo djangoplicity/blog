@@ -38,6 +38,7 @@ from djangoplicity.archives.contrib.admin.defaults import RenameAdmin, Translati
 from djangoplicity.contrib import admin as dpadmin
 
 from djangoplicity.blog.models import Author, AuthorDescription, Category, Post, PostProxy, Tag
+from djangoplicity.contrib.admin import CleanHTMLAdmin
 
 
 class AuthorAdmin(RenameAdmin, dpadmin.DjangoplicityModelAdmin):
@@ -62,7 +63,7 @@ def view_online_post(post):
     return format_html('<a href="{}">View online</a>', reverse('blog_detail', args=[post.slug]))
 
 
-class PostAdmin(RenameAdmin, dpadmin.DjangoplicityModelAdmin):
+class PostAdmin(dpadmin.DjangoplicityModelAdmin, CleanHTMLAdmin, RenameAdmin):
     filter_horizontal = ('authors', 'tags')
     inlines = (AuthorDescriptionInline, )
     list_display = ('slug', 'title', 'category', 'release_date', 'published', view_online_post)

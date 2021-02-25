@@ -144,6 +144,7 @@ class Post(ArchiveModel, TranslationModel):
                 ('blog_authordescription', 'post_id'),
                 ('blog_post_tags', 'post_id'),
             )
+            clean_html_fields = ['body', 'discover_box', 'numbers_box', 'links']
 
     def __unicode__(self):
         return self.title
