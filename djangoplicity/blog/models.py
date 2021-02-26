@@ -41,6 +41,7 @@ from django.template.base import TemplateSyntaxError
 from djangoplicity.archives.base import ArchiveModel, cache_handler
 from djangoplicity.archives.translation import TranslationProxyMixin
 from djangoplicity.media.models import Image
+from djangoplicity.translation.fields import TranslationManyToManyField, TranslationForeignKey
 from djangoplicity.translation.models import TranslationModel, translation_reverse
 from django.utils.translation import ugettext_lazy as _
 
@@ -111,10 +112,10 @@ class Post(ArchiveModel, TranslationModel):
         max_length=255, blank=True,
         help_text='Optional subtitle'
     )
-    banner = models.ForeignKey(Image, verbose_name='Banner Image')
-    authors = models.ManyToManyField('Author', through='AuthorDescription')
-    category = models.ForeignKey('Category')
-    tags = models.ManyToManyField('Tag', blank=True)
+    banner = TranslationForeignKey(Image, verbose_name='Banner Image')
+    authors = TranslationManyToManyField('Author', through='AuthorDescription')
+    category = TranslationForeignKey('Category')
+    tags = TranslationManyToManyField('Tag', blank=True)
     lede = models.TextField()
     body = models.TextField()
     discover_box = models.TextField(blank=True)
