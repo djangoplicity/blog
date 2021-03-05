@@ -70,7 +70,7 @@ class PostAdmin(dpadmin.DjangoplicityModelAdmin, CleanHTMLAdmin, RenameAdmin):
     list_filter = ('category', 'authors', 'tags')
     raw_id_fields = ('banner', )
     readonly_fields = ('last_modified', 'created')
-    richtext_fields = ('body', 'discover_box', 'numbers_box', 'links')
+    richtext_fields = ('body', 'discover_box', 'numbers_box', 'profile', 'links')
     search_fields = ('slug', 'title', 'subtitle', 'lede', 'body', 'links', 'discover_box', 'numbers_box')
     fieldsets = (
         (
@@ -80,7 +80,7 @@ class PostAdmin(dpadmin.DjangoplicityModelAdmin, CleanHTMLAdmin, RenameAdmin):
         (
             'Content',
             {'fields': ('banner', 'title', 'subtitle', 'lede', 'body',
-            ('discover_box', 'numbers_box'), 'links')}
+            ('discover_box', 'numbers_box'), ('profile', 'links'))}
         ),
         (
             'Metadata',
@@ -106,7 +106,7 @@ class PostProxyAdmin(RenameAdmin, dpadmin.DjangoplicityModelAdmin, TranslationDu
         ),
         (
             'Content',
-            {'fields': ('title', 'subtitle', 'lede', 'body', ('discover_box', 'numbers_box'), 'links')}
+            {'fields': ('title', 'subtitle', 'lede', 'body', ('discover_box', 'numbers_box'), ('profile', 'links'))}
         )
     )
     raw_id_fields = ('source',)

@@ -120,13 +120,14 @@ class Post(ArchiveModel, TranslationModel):
     body = models.TextField()
     discover_box = models.TextField(blank=True)
     numbers_box = models.TextField(blank=True)
+    profile = models.TextField(blank=True)
     links = models.TextField(blank=True)
 
     class Meta:
         ordering = ('-release_date', )
 
     class Translation:
-        fields = ['title', 'subtitle', 'lede', 'body', 'discover_box', 'numbers_box', 'links']
+        fields = ['title', 'subtitle', 'lede', 'body', 'discover_box', 'numbers_box', 'profile', 'links']
         excludes = ['published', 'last_modified', 'created']
         non_default_languages_in_fallback = False  # Don't show non-en post. if no en translation is available
 
@@ -145,7 +146,7 @@ class Post(ArchiveModel, TranslationModel):
                 ('blog_authordescription', 'post_id'),
                 ('blog_post_tags', 'post_id'),
             )
-            clean_html_fields = ['body', 'discover_box', 'numbers_box', 'links']
+            clean_html_fields = ['body', 'discover_box', 'numbers_box', 'profile', 'links']
 
     def __unicode__(self):
         return self.title

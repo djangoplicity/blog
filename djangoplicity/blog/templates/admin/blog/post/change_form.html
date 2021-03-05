@@ -7,7 +7,7 @@
   <li><a href="{% url opts|admin_urlname:'cleanhtml' original.pk|admin_urlquote %}" class="historylink">{% trans "Clean HTML" %}</a></li>
   {# <li><a href="rename/" class="historylink">{% trans "Rename" %}</a></li> #}
   {% if DJANGOPLICITY.USE_I18N %}
-    <li><a href="{% url opts|admin_urlname:'changelist' %}?source__exact={{original.pk}}" class="historylink">{% trans "Translations" %}</a></li>
+    <li><a href="{% url 'admin:blog_postproxy_changelist' %}?source__exact={{original.pk}}" class="historylink">{% trans "Translations" %}</a></li>
     <li><a href="{% url 'admin:blog_postproxy_add' %}?source={{original.pk}}" class="historylink">{% trans "Add translation" %}</a></li>
   {% endif %}
   <li><a href="{% url opts|admin_urlname:'history' original.pk|admin_urlquote %}" class="historylink">{% trans "History" %}</a></li>
