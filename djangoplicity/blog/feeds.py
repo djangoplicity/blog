@@ -30,14 +30,16 @@
 # POSSIBILITY OF SUCH DAMAGE
 
 from djangoplicity.archives.feeds import DjangoplicityArchiveFeed
-
+from django.conf import settings
 from djangoplicity.blog.models import Post
 from djangoplicity.blog.options import PostOptions
 
+BLOG_TITLE = settings.BLOG_TITLE if hasattr( settings, 'BLOG_TITLE' ) else 'Blog'
+BLOG_DESCRIPTION = settings.BLOG_DESCRIPTION if hasattr( settings, 'BLOG_DESCRIPTION' ) else ''
 
 class PostFeed(DjangoplicityArchiveFeed):
-    title = 'ESOblog'
-    description = 'Behind the scenes at ESO: Showing you the road to the stars'
+    title = BLOG_TITLE
+    description = BLOG_DESCRIPTION
     description_template = 'feeds/post_description.html'
     link = '/public/blog/'
 
