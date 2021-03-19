@@ -22,7 +22,7 @@ def blog_video(src, **kwargs):
         return ''
     return format_html(
         '<div class="blog-video-wrapper {html_class}">'
-            '<video id="{id}" src="{src}" loop="loop" muted="muted" width="100%"></video>'
+            '<video id="{id}" src="{src}" loop="loop" muted="muted" preload="auto" width="100%"></video>'
             '<div class="blog-video-mute-control" onclick="toggleVideoMute({id})"><i class="fa fa-volume-off"></i></div>'
         '</div>',
         src=src,
