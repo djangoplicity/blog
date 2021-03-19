@@ -39,6 +39,7 @@ from djangoplicity.contrib import admin as dpadmin
 
 from djangoplicity.blog.models import Author, AuthorDescription, Category, Post, PostProxy, Tag
 from djangoplicity.contrib.admin import CleanHTMLAdmin
+from modeltranslation.admin import TranslationAdmin
 
 
 class AuthorAdmin(RenameAdmin, dpadmin.DjangoplicityModelAdmin):
@@ -50,9 +51,11 @@ class AuthorDescriptionInline(admin.TabularInline):
     model = AuthorDescription
 
 
-class CategoryAdmin(RenameAdmin, dpadmin.DjangoplicityModelAdmin):
+class CategoryAdmin(TranslationAdmin):
     list_display = ('name', 'slug', 'view_online')
+    fields = ('name', 'slug', 'footer')
     richtext_fields = ('footer', )
+    prepopulated_fields = {"slug": ("name",)}
 
     def view_online(self, obj):
         return format_html('<a href="{}">View online</a>',

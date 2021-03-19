@@ -39,7 +39,8 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'setuptools'
+        'setuptools',
+        'django-modeltranslation == 0.16.2'
     ],
 
     # metadata for upload to PyPI
