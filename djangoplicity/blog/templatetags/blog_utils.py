@@ -1,6 +1,7 @@
 from django import template
 from django.utils.html import format_html
 from djangoplicity.blog.models import Category
+from random import randint
 
 register = template.Library()
 
@@ -20,8 +21,13 @@ def blog_video(src, **kwargs):
     if not src:
         return ''
     return format_html(
-        '<video src="{}" class="{}" autoplay="autoplay" loop="loop" muted="muted" width="100%"></video>',
-        src, html_class
+        '<div class="blog-video-wrapper {html_class}">'
+            '<video id="{id}" src="{src}" loop="loop" muted="muted" width="100%"></video>'
+            '<div class="blog-video-mute-control" onclick="toggleVideoMute({id})"><i class="fa fa-volume-off"></i></div>'
+        '</div>',
+        src=src,
+        html_class=html_class,
+        id=randint(0, 100000)
     )
 
 

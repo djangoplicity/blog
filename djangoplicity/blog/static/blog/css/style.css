@@ -232,3 +232,29 @@
 #blog .post .telescopes-mosaic .telescope:hover .title {
   opacity: 1;
 }
+
+#blog .blog-video-wrapper {
+  position: relative;
+}
+
+#blog .blog-video-mute-control {
+  position: absolute;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 30px;
+  right: 10px;
+  background: #525252;
+  color: white;
+  border-radius: 50%;
+  font-size: 30px;
+  width: 50px;
+  height: 50px;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+
+#blog .blog-video-wrapper:hover .blog-video-mute-control {
+  opacity: 1;
+}
