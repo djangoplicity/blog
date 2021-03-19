@@ -39,11 +39,26 @@ from django.template import Engine, Template
 from django.template.base import TemplateSyntaxError
 
 from djangoplicity.archives.base import ArchiveModel, cache_handler
-from djangoplicity.archives.translation import TranslationProxyMixin
 from djangoplicity.media.models import Image
 from djangoplicity.translation.fields import TranslationManyToManyField, TranslationForeignKey
 from djangoplicity.translation.models import TranslationModel, translation_reverse
 from django.utils.translation import ugettext_lazy as _
+
+
+class BlogTranslationProxyMixin(object):
+    def validate_unique(self, exclude=None):
+        # Note: We are not using the clean method from the TranslationProxyMixin
+        # because it doesn't consider the case when the translation PK(Slug) is manually filled or the ID is numeric
+        """ Validate that translation language is *not* identical to source language. """
+        try:
+            if not self.source:
+                raise ValidationError("Blog: You must provide a translation source.")
+            if self._state and self._state.adding:
+                self.__class__.objects.get(source=self.source.pk, lang=self.lang)
+                raise ValidationError({'lang': ["Blog: Translation already exists for selected language."]})
+        except ObjectDoesNotExist:
+            pass
+        super(BlogTranslationProxyMixin, self).validate_unique(exclude=exclude)
 
 
 class Author(models.Model):
@@ -143,8 +158,8 @@ class Post(ArchiveModel, TranslationModel):
             rename_pk = ('blog_post', 'slug')
             rename_fks = (
                 ('blog_post', 'source_id'),
-                ('blog_authordescription', 'post_id'),
-                ('blog_post_tags', 'post_id'),
+                ('blog_authordescription', 'post_slug'),
+                ('blog_post_tags', 'post_slug'),
             )
             clean_html_fields = ['body', 'discover_box', 'numbers_box', 'profile', 'links']
 
@@ -197,41 +212,22 @@ class Post(ArchiveModel, TranslationModel):
 
 
 # ========================================================================
-# Translation proxy model
+# Translation proxy model,
+# The BlogTranslationProxyMixin must be before Post, otherwise it's super() methods doesn't work correctly
 # ========================================================================
-class PostProxy(Post, TranslationProxyMixin):
+class PostProxy(BlogTranslationProxyMixin, Post):
     """
     Post proxy model for creating admin only to edit
     translated objects.
     """
     objects = Post.translation_objects
 
-    def validate_unique(self, exclude=None):
-        # Note: We are not using the clean method from the TranslationProxyMixin
-        # because it doesn't consider the case when the translation PK(Slug) is manually filled
-        """ Validate that translation language is *not* identical to source language. """
-        try:
-            if not self.source:
-                raise ValidationError("You must provide a translation source.")
-            if self._state and self._state.adding:
-                PostProxy.objects.get(source=self.source.pk, lang=self.lang)
-                raise ValidationError({'lang': ["Translation already exists for selected language."]})
-        except ObjectDoesNotExist:
-            pass
-        super(PostProxy, self).validate_unique(exclude=exclude)
-
-    def __str__(self):
+    def __unicode__(self):
         return self.title
 
     class Meta:
         proxy = True
         verbose_name = _('Post translation')
-
-    # class Archive:
-    #    class Meta:
-    #        rename_pk = ('announcements_announcement', 'id')
-    #        rename_fks = []
-    #        clean_html_fields = ['description', 'links', 'contacts']
 
 
 class Tag(models.Model):
