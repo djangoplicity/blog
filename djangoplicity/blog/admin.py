@@ -42,9 +42,9 @@ from djangoplicity.contrib.admin import CleanHTMLAdmin
 from modeltranslation.admin import TranslationAdmin
 
 
-class AuthorAdmin(RenameAdmin, dpadmin.DjangoplicityModelAdmin):
-    raw_id_fields = ('photo', )
-    richtext_fields = ('biography', )
+class AuthorAdmin(TranslationAdmin):
+    raw_id_fields = ('photo',)
+    richtext_fields = ('biography',)
 
 
 class AuthorDescriptionInline(admin.TabularInline):
