@@ -244,17 +244,17 @@
   align-items: center;
   justify-content: center;
   top: 30px;
-  right: 10px;
+  left: 10px;
   background: #525252;
   color: white;
   border-radius: 50%;
-  font-size: 30px;
-  width: 50px;
-  height: 50px;
+  font-size: 50px;
+  width: 80px;
+  height: 80px;
   opacity: 0;
   transition: opacity 0.6s;
 }
 
-#blog .blog-video-wrapper:hover .blog-video-mute-control {
-  opacity: 1;
+#blog .blog-video-wrapper:hover .blog-video-mute-control, .blog-video-mute-control.active {
+  opacity: 1 !important;
 }

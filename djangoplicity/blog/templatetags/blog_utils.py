@@ -20,10 +20,11 @@ def blog_video(src, **kwargs):
 
     if not src:
         return ''
+    # Boostrap icons required
     return format_html(
         '<div class="blog-video-wrapper {html_class}">'
             '<video id="{id}" src="{src}" loop="loop" muted="muted" preload="auto" width="100%"></video>'
-            '<div class="blog-video-mute-control" onclick="toggleVideoMute({id})"><i class="fa fa-volume-off"></i></div>'
+            '<div class="blog-video-mute-control active" onclick="toggleVideoMute({id})"><i class="bi bi-volume-mute-fill"></i></div>'
         '</div>',
         src=src,
         html_class=html_class,
