@@ -28,7 +28,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE
-
+from django.contrib.sites.models import Site
 from rest_framework import serializers
 
 from djangoplicity.archives.utils import get_instance_archives_urls
@@ -60,11 +60,15 @@ class PostSerializer(serializers.ModelSerializer):
     authors = AuthorDescriptionSerializer(source='authordescription_set', many=True)
     banner = serializers.SerializerMethodField(read_only=True)
     category = CategorySerializer(read_only=True)
+    url = serializers.SerializerMethodField(read_only=True)
 
     def get_banner(self, obj):
         return get_instance_archives_urls(obj.banner)
 
+    def get_url(self, obj):
+        url = obj.get_absolute_url()
+        return 'https://{}{}'.format(Site.objects.get_current().domain, url)
+
     class Meta:
         model = Post
-        fields = ('slug', 'title', 'subtitle', 'banner', 'authors', 'category',
-            'lede', 'release_date')
+        fields = ('slug', 'url', 'title', 'subtitle', 'banner', 'authors', 'category', 'lede', 'release_date')
