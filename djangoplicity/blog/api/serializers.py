@@ -61,6 +61,7 @@ class PostSerializer(serializers.ModelSerializer):
     banner = serializers.SerializerMethodField(read_only=True)
     category = CategorySerializer(read_only=True)
     url = serializers.SerializerMethodField(read_only=True)
+    id = serializers.SerializerMethodField()
 
     def get_banner(self, obj):
         return get_instance_archives_urls(obj.banner)
@@ -69,6 +70,10 @@ class PostSerializer(serializers.ModelSerializer):
         url = obj.get_absolute_url()
         return 'https://{}{}'.format(Site.objects.get_current().domain, url)
 
+    def get_id(self, obj):
+        # Slug is the primary key of posts, we return the same Id for all translations in the API so that we can related
+        return obj.source_id if obj.source_id else obj.pk
+
     class Meta:
         model = Post
-        fields = ('slug', 'url', 'title', 'subtitle', 'banner', 'authors', 'category', 'lede', 'release_date')
+        fields = ('id', 'slug', 'url', 'title', 'subtitle', 'banner', 'authors', 'category', 'lede', 'release_date')
