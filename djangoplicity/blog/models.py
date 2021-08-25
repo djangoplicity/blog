@@ -229,6 +229,10 @@ class PostProxy(BlogTranslationProxyMixin, Post):
         proxy = True
         verbose_name = _('Post translation')
 
+    def get_absolute_url(self):
+        post = self.get_source()
+        return translation_reverse('blog_detail', args=[post.slug], lang=self.lang)
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=50)
