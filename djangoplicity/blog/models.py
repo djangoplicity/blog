@@ -43,7 +43,7 @@ from djangoplicity.media.models import Image
 from djangoplicity.translation.fields import TranslationManyToManyField, TranslationForeignKey
 from djangoplicity.translation.models import TranslationModel, translation_reverse
 from django.utils.translation import ugettext_lazy as _
-
+from djangoplicity.blog.validators import validate_string_template
 
 class BlogTranslationProxyMixin(object):
     def validate_unique(self, exclude=None):
@@ -132,7 +132,7 @@ class Post(ArchiveModel, TranslationModel):
     category = TranslationForeignKey('Category')
     tags = TranslationManyToManyField('Tag', blank=True)
     lede = models.TextField()
-    body = models.TextField()
+    body = models.TextField(validators=[validate_string_template])
     discover_box = models.TextField(blank=True)
     numbers_box = models.TextField(blank=True)
     profile = models.TextField(blank=True)
