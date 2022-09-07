@@ -66,7 +66,8 @@ class Author(models.Model):
     biography = models.TextField(blank=True)
     photo = models.ForeignKey(
         Image, blank=True, null=True,
-        help_text='Image from the archive'
+        help_text='Image from the archive',
+        on_delete=models.SET_NULL
     )
     static_photo = models.CharField(
         max_length=200, blank=True,
@@ -127,9 +128,9 @@ class Post(ArchiveModel, TranslationModel):
         max_length=255, blank=True,
         help_text='Optional subtitle'
     )
-    banner = TranslationForeignKey(Image, verbose_name='Banner Image')
+    banner = TranslationForeignKey(Image, verbose_name='Banner Image', null=True, on_delete=models.SET_NULL)
     authors = TranslationManyToManyField('Author', through='AuthorDescription')
-    category = TranslationForeignKey('Category')
+    category = TranslationForeignKey('Category', null=True, on_delete=models.SET_NULL)
     tags = TranslationManyToManyField('Tag', blank=True)
     lede = models.TextField()
     body = models.TextField()
