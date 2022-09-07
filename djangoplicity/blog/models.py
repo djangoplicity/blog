@@ -74,7 +74,7 @@ class Author(models.Model):
         help_text='Direct link to a JPG image, recommended size: 350px wide'
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @staticmethod
@@ -95,7 +95,7 @@ class AuthorDescription(models.Model):
         help_text='Optional description, e.g.: "Author: ", or "Interview with"'
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.description + ' ' + self.author.name
 
 
@@ -112,7 +112,7 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = 'categories'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @staticmethod
@@ -164,7 +164,7 @@ class Post(ArchiveModel, TranslationModel):
             )
             clean_html_fields = ['body', 'discover_box', 'numbers_box', 'profile', 'links']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def save(self, *args, **kwargs):
@@ -223,7 +223,7 @@ class PostProxy(BlogTranslationProxyMixin, Post):
     """
     objects = Post.translation_objects
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     class Meta:
@@ -238,7 +238,7 @@ class Tag(models.Model):
         help_text='Slug of the tag, used for URLs'
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
