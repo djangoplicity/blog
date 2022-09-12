@@ -91,9 +91,11 @@ class PostAdmin(dpadmin.DjangoplicityModelAdmin, CleanHTMLAdmin, RenameAdmin):
         )
     )
 
+def view_online_translation_post(post):
+    return format_html('<a href="{}?lang={}">View online</a>', post.get_absolute_url(), post.lang)
 
 class PostProxyAdmin(RenameAdmin, dpadmin.DjangoplicityModelAdmin, TranslationDuplicateAdmin, SyncTranslationAdmin, ArchiveAdmin):
-    list_display = PostAdmin.list_display
+    list_display = ('slug', 'title', 'category', 'release_date', 'published', view_online_translation_post)
     fieldsets = (
         (
             'Language',
