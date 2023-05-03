@@ -200,7 +200,8 @@ class Post(ArchiveModel, TranslationModel):
             return e.template_debug
 
     def get_absolute_url(self):
-        return translation_reverse('blog_detail', args=[self.slug], lang=self.lang)
+        post = self.get_source()
+        return translation_reverse('blog_detail', args=[post.slug], lang=self.lang)
 
     def og_title(self):
         '''
