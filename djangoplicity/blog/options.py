@@ -48,6 +48,10 @@ class PostOptions(ArchiveOptions):
     detail_view = PostDetailView
     select_related = ('banner', )
     prefetch_related = ('tags', 'authordescription_set__author')
+    search_fields = (
+        'slug', 'title', 'subtitle', 'lede', 'body', 'authors__name',
+        'category__name_en', 'category__name_es', 'category__slug_en', 'category__slug_es', 'tags__name', 'tags__slug'
+    )
 
     class Queries(object):
         default = AllPublicQuery(browsers=('normal', ), verbose_name=_('Blog Posts'), feed_name='default', select_related=['category'])
